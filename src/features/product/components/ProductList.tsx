@@ -1,5 +1,11 @@
+import { Button } from "@mui/material";
+
 function ProductList() {
-  return <div>ProductList</div>;
+  return (
+    <div>
+      <Button variant="contained">My Button</Button>
+    </div>
+  );
 }
 
 export default ProductList;
