@@ -54,59 +54,71 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
+const initialFields = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+};
+
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState("");
+  const [fields, setFields] = React.useState(initialFields);
+  const [fieldsErrors, setFieldsErrors] = React.useState(initialFields);
 
   const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-    const name = document.getElementById("name") as HTMLInputElement;
-
+    const errors = { ...initialFields };
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
+    if (!fields.email || !/\S+@\S+\.\S+/.test(fields.email)) {
+      errors.email = "Invalid email";
       isValid = false;
     } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
+      errors.email = "";
+      isValid = true;
     }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
+    if (!fields.password || fields.password.length < 6) {
+      errors.password = "Password must be at least 6 characters long";
       isValid = false;
     } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
+      errors.password = "";
+      isValid = true;
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage("Name is required.");
+    if (!fields.firstName || fields.firstName.length < 1) {
+      errors.firstName = "First name is required";
       isValid = false;
     } else {
-      setNameError(false);
-      setNameErrorMessage("");
+      errors.firstName = "";
+      isValid = true;
     }
+
+    if (!fields.lastName || fields.lastName.length < 1) {
+      errors.lastName = "Last name is required";
+      isValid = false;
+    } else {
+      errors.lastName = "";
+      isValid = true;
+    }
+
+    setFieldsErrors(errors);
 
     return isValid;
   };
 
+  const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFields((prevFields) => ({
+      ...prevFields,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
+    event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      name: data.get("name"),
+      firstName: data.get("firstName"),
       lastName: data.get("lastName"),
       email: data.get("email"),
       password: data.get("password"),
@@ -131,17 +143,31 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
+              <FormLabel htmlFor="firstName">First name</FormLabel>
               <TextField
-                autoComplete="name"
-                name="name"
+                autoComplete="firstName"
+                name="firstName"
                 required
                 fullWidth
-                id="name"
-                placeholder="Jon Snow"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? "error" : "primary"}
+                id="firstName"
+                placeholder="Jon"
+                onChange={handleFieldChange}
+                error={Boolean(fieldsErrors.firstName)}
+                helperText={fieldsErrors.firstName}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="lastName">Last name</FormLabel>
+              <TextField
+                autoComplete="lastName"
+                name="lastName"
+                required
+                fullWidth
+                id="lastName"
+                placeholder="Doe"
+                onChange={handleFieldChange}
+                error={Boolean(fieldsErrors.lastName)}
+                helperText={fieldsErrors.lastName}
               />
             </FormControl>
             <FormControl>
@@ -154,9 +180,10 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 name="email"
                 autoComplete="email"
                 variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
+                onChange={handleFieldChange}
+                error={Boolean(fieldsErrors.email)}
+                helperText={fieldsErrors.email}
+                color={fieldsErrors.email ? "error" : "primary"}
               />
             </FormControl>
             <FormControl>
@@ -170,9 +197,10 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
+                onChange={handleFieldChange}
+                error={Boolean(fieldsErrors.password)}
+                helperText={fieldsErrors.password}
+                color={fieldsErrors.password ? "error" : "primary"}
               />
             </FormControl>
             <Button
