@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,6 +10,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./AppTheme";
 import { NavLink } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -54,75 +54,22 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const initialFields = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-};
+interface IFeildInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
-  const [fields, setFields] = React.useState(initialFields);
-  const [fieldsErrors, setFieldsErrors] = React.useState(initialFields);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFeildInput>();
 
-  const validateInputs = () => {
-    const errors = { ...initialFields };
-    let isValid = true;
-
-    if (!fields.email || !/\S+@\S+\.\S+/.test(fields.email)) {
-      errors.email = "Invalid email";
-      isValid = false;
-    } else {
-      errors.email = "";
-      isValid = true;
-    }
-
-    if (!fields.password || fields.password.length < 6) {
-      errors.password = "Password must be at least 6 characters long";
-      isValid = false;
-    } else {
-      errors.password = "";
-      isValid = true;
-    }
-
-    if (!fields.firstName || fields.firstName.length < 1) {
-      errors.firstName = "First name is required";
-      isValid = false;
-    } else {
-      errors.firstName = "";
-      isValid = true;
-    }
-
-    if (!fields.lastName || fields.lastName.length < 1) {
-      errors.lastName = "Last name is required";
-      isValid = false;
-    } else {
-      errors.lastName = "";
-      isValid = true;
-    }
-
-    setFieldsErrors(errors);
-
-    return isValid;
-  };
-
-  const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const onSubmit: SubmitHandler<IFeildInput> = (data) => {
+    console.log("check", data);
   };
 
   return (
@@ -139,76 +86,69 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <FormControl>
               <FormLabel htmlFor="firstName">First name</FormLabel>
               <TextField
                 autoComplete="firstName"
-                name="firstName"
-                required
                 fullWidth
                 id="firstName"
                 placeholder="Jon"
-                onChange={handleFieldChange}
-                error={Boolean(fieldsErrors.firstName)}
-                helperText={fieldsErrors.firstName}
+                error={Boolean(errors.firstName)}
+                helperText={errors.firstName?.message}
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
               />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="lastName">Last name</FormLabel>
               <TextField
                 autoComplete="lastName"
-                name="lastName"
-                required
                 fullWidth
                 id="lastName"
                 placeholder="Doe"
-                onChange={handleFieldChange}
-                error={Boolean(fieldsErrors.lastName)}
-                helperText={fieldsErrors.lastName}
+                error={Boolean(errors.lastName)}
+                helperText={errors.lastName?.message}
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
               />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                required
                 fullWidth
                 id="email"
                 placeholder="your@email.com"
-                name="email"
                 autoComplete="email"
                 variant="outlined"
-                onChange={handleFieldChange}
-                error={Boolean(fieldsErrors.email)}
-                helperText={fieldsErrors.email}
-                color={fieldsErrors.email ? "error" : "primary"}
+                error={Boolean(errors.email)}
+                helperText={errors.email?.message}
+                {...register("email", {
+                  required: "Email is required",
+                })}
               />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                required
                 fullWidth
-                name="password"
                 placeholder="••••••"
                 type="password"
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
-                onChange={handleFieldChange}
-                error={Boolean(fieldsErrors.password)}
-                helperText={fieldsErrors.password}
-                color={fieldsErrors.password ? "error" : "primary"}
+                error={Boolean(errors.password)}
+                helperText={errors.password?.message}
+                {...register("password", {
+                  required: "Password is required",
+                })}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign up
             </Button>
           </Box>
