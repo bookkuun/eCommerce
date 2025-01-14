@@ -15,6 +15,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IFeildInput } from "../interfaces/AuthInterface";
 import { schema } from "../schemas/AuthSchema";
+import { useAppDispatch } from "@/redux/hook";
+import { showToast } from "@/redux/toast/toast.slice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -59,6 +61,8 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
+  const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
@@ -67,6 +71,9 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 
   const onSubmit: SubmitHandler<IFeildInput> = (data) => {
     console.log("check", data);
+    dispatch(
+      showToast({ message: "Sign up successfully", severity: "success" })
+    );
   };
 
   return (

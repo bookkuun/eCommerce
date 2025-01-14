@@ -8,6 +8,10 @@ import ProductList from "@/features/product/components/ProductList.tsx";
 import SignUpPage from "@/features/auth/pages/SignUpPage.tsx";
 import SignInPage from "./features/auth/pages/SignInPage";
 
+// Import the Store
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -35,6 +39,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>
 );
