@@ -11,6 +11,8 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./AppTheme";
 import { NavLink } from "react-router-dom";
+import { useAppDispatch } from "@/redux/hook";
+import { showToast } from "@/redux/toast/toast.slice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -60,6 +62,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
 
+  // Redux
+  const dispatch = useAppDispatch();
+
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
@@ -88,6 +93,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (emailError || passwordError) {
       event.preventDefault();
       return;
@@ -99,6 +105,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       email: data.get("email"),
       password: data.get("password"),
     });
+
+    dispatch(
+      showToast({ message: "Sign in successful!", severity: "success" })
+    );
   };
 
   return (
