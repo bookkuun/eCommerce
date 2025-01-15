@@ -17,6 +17,7 @@ import { IFeildInput } from "../interfaces/AuthInterface";
 import { schema } from "../schemas/AuthSchema";
 import { useAppDispatch } from "@/redux/hook";
 import { showToast } from "@/redux/toast/toast.slice";
+import authApi from "@/apis/authApi";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -69,8 +70,10 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     formState: { errors },
   } = useForm<IFeildInput>({ resolver: yupResolver(schema) });
 
-  const onSubmit: SubmitHandler<IFeildInput> = (data) => {
-    console.log("check", data);
+  const onSubmit: SubmitHandler<IAuthPayload> = async (data) => {
+    const authData = { ...data, avatar: "" };
+    const response = await authApi.register(authData);
+    console.log("check", response);
     dispatch(
       showToast({ message: "Sign up successfully", severity: "success" })
     );
