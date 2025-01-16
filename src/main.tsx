@@ -12,6 +12,10 @@ import SignInPage from "./features/auth/pages/SignInPage";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
 import Toast from "./components/Toast";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -41,8 +45,11 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
-      <Toast />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toast />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </Provider>
   </StrictMode>
 );

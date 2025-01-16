@@ -70,8 +70,8 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     formState: { errors },
   } = useForm<IFeildInput>({ resolver: yupResolver(schema) });
 
-  const onSubmit: SubmitHandler<IAuthPayload> = async (data) => {
-    const authData = { ...data, avatar: "" };
+  const onSubmit: SubmitHandler<IFeildInput> = async (data) => {
+    const authData = { ...data, avatar: "" } as IAuthPayload;
     const response = await authApi.register(authData);
     console.log("check", response);
     dispatch(
