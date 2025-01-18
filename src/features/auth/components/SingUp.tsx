@@ -18,6 +18,7 @@ import { schema } from "../schemas/AuthSchema";
 import { useAppDispatch } from "@/redux/hook";
 import { showToast } from "@/redux/toast/toast.slice";
 import authApi from "@/apis/authApi";
+import { useMutation } from "@tanstack/react-query";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -70,13 +71,26 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     formState: { errors },
   } = useForm<IFeildInput>({ resolver: yupResolver(schema) });
 
+  const mutation = useMutation({
+    mutationFn: async (authData: IAuthPayload) => {
+      const response = await authApi.register(authData);
+      return response;
+    },
+    onSuccess: () => {
+      console.log("Sign up successfully");
+      dispatch(
+        showToast({ message: "Sign up successfully", severity: "success" })
+      );
+    },
+    onError: () => {
+      console.log("Sign up failed");
+      dispatch(showToast({ message: "Sign up failed", severity: "error" }));
+    },
+  });
+
   const onSubmit: SubmitHandler<IFeildInput> = async (data) => {
     const authData = { ...data, avatar: "" } as IAuthPayload;
-    const response = await authApi.register(authData);
-    console.log("check", response);
-    dispatch(
-      showToast({ message: "Sign up successfully", severity: "success" })
-    );
+    mutation.mutate(authData);
   };
 
   return (
