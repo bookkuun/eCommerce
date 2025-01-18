@@ -3,18 +3,14 @@ import { Outlet } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import authApi from "@/apis/authApi";
+
 import { setUser } from "@/redux/user/user.slice";
 import { useAppDispatch } from "@/redux/hook";
+import useGetMeQuery from "@/hooks/useGetMeQuery";
 
 function UserRoutes() {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["me"],
-    queryFn: authApi.getMe,
-  });
-
   const dispatch = useAppDispatch();
+  const { data, isLoading, error } = useGetMeQuery();
 
   useEffect(() => {
     dispatch(
