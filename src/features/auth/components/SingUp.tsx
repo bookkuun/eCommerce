@@ -9,7 +9,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./AppTheme";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -19,6 +19,7 @@ import { useAppDispatch } from "@/redux/hook";
 import { showToast } from "@/redux/toast/toast.slice";
 import authApi from "@/apis/authApi";
 import { useMutation } from "@tanstack/react-query";
+import { setUser } from "@/redux/user/user.slice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -64,6 +65,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -76,13 +78,29 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       const response = await authApi.register(authData);
       return response;
     },
-    onSuccess: () => {
-      console.log("Sign up successfully");
+    onSuccess: async () => {
+      const myInfo = await authApi.getMe();
+      console.log("myInfo", myInfo);
+      dispatch(
+        setUser({
+          firstName: myInfo.firstName,
+          lastName: myInfo.lastName,
+          email: myInfo.email,
+          avatar: myInfo.avatar,
+          role: myInfo.role,
+        })
+      );
+      console.log("test1");
+
       dispatch(
         showToast({ message: "Sign up successfully", severity: "success" })
       );
+
+      console.log("test2");
+      navigate("/products");
     },
-    onError: () => {
+    onError: (error) => {
+      console.log("error", error);
       console.log("Sign up failed");
       dispatch(showToast({ message: "Sign up failed", severity: "error" }));
     },
