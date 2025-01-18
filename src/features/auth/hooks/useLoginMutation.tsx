@@ -28,11 +28,12 @@ function useLoginMutation() {
         })
       );
 
+      if (myInfo.role === "ADMIN") navigate("/admin");
+      if (myInfo.role === "USER") navigate("/products");
+
       dispatch(
         showToast({ message: "Login successfully", severity: "success" })
       );
-
-      navigate("/products");
     },
     onError: (error) => {
       console.log("Login failed", error);

@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Import the App component
 import UserRoutes from "@/routes/user.routes.tsx";
+import AdminRoutes from "./routes/admin.routes";
 import ProductList from "@/features/product/components/ProductList.tsx";
 import SignUpPage from "@/features/auth/pages/SignUpPage.tsx";
 import SignInPage from "./features/auth/pages/SignInPage";
@@ -14,6 +15,7 @@ import { store } from "@/redux/store";
 import Toast from "./components/Toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Dashboard from "./components/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,16 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <div>User Profile</div>,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminRoutes />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
       },
     ],
   },
