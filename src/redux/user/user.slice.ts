@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IUserData {
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  role: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  role?: string;
 }
 
 interface IUserPayload {
